@@ -1109,9 +1109,9 @@ class Admin:
         pList=[]
         allResults = []
 
-        sQuery=self._getCatalogQuery(1,100)#get first batch
+        sQuery=self._getCatalogQuery(1,1000)#get first batch
 
-        print("fetching records 1-100...")
+        #print("fetching records 1-100...")
 
         response = urllib.urlopen(sQuery).read()
         jresult=json.loads(response)
