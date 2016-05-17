@@ -269,6 +269,33 @@ class Portal(object):
         else:
             return False
 
+    def disable_user(self, username, reassign_to=None):
+        """ Deletes a user from the portal, optionally deleting or reassigning groups and items.
+
+            Notes
+                You can not delete a user in Portal if that user owns groups or items.  If you 
+                specify someone in the reassign_to argument then items and groups will be
+                transferred to that user.  If that argument is not set then the method
+                will fail if the user has items or groups that need to be reassigned.
+                
+           
+            Arguments
+                 username       required string, the name of the user
+                 reassign_to    optional string, new owner of items and groups
+            
+            Returns
+                a boolean indicating whether the operation succeeded or failed.
+        
+        """
+
+        if reassign_to :
+            self.reassign_user(username, reassign_to)
+        resp = self.con.post('community/users/' + username + '/disable',self._postdata())
+        if resp:
+            return resp.get('success')
+        else:
+            return False
+			
     def generate_token(self, username, password, expiration=60):
         """ Generates and returns a new token, but doesn't re-login. 
         
