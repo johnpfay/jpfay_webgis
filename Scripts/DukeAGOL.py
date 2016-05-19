@@ -33,13 +33,19 @@ roleLookup = {}
 for role in roles:
     roleLookup[role["id"]] = role["name"]
 
-def disableUser(username):
+def deleteUser(username, portalObj):
+    doIt = raw_input("DELETE "+username+"?")
+    if doIt == "y":
+        print "removing "+ username
+        portalObj.delete_user(username)
+
+def disableUser(username, portalObj):
     doIt = raw_input("Disable "+username+"?")
     if doIt == "y":
         print "removing "+ username
-        portal.disable_user(username)
+        portalObj.disable_user(username)
 
-def removeNullUsers():
+def removeNullUsers(portal):
     '''Disables accounts that have never logged in and with no items'''
     for user in users:
         #Get data user last logged in
@@ -50,7 +56,7 @@ def removeNullUsers():
             #Get items for user
             items = agoAdmin.AGOLCatalog('owner:{}'.format(user['username']))
             if len(items) == 0:
-                disableUser(user['username'])
+                deleteUser(user['username'],portal)
 
 def writeUserCSV():
     '''Writes user and user info to CSV file'''
@@ -93,4 +99,14 @@ def moveItems(userFrom,userTo):
     agoAdmin.addUser2ToAllUser1Groups(userFrom, userTo)
     return
 
+
+def disableUsers(csvFileName, portalObj):
+    '''Disables users listed in a CSV file of usernames'''
+    f = open(csvFileName,'r')
+    userNames = f.readlines()
+    for userName in userNames:
+        print "Disabling " + userName[:-1]
+        portalObj.disable_user(userName[:-1])
+        
 # moveItems('env761_jpfay','jpfay_dukeuniv')
+# disableUsers("../data/May16Changes/ENV761_DisabledUsernames.csv",portal)
